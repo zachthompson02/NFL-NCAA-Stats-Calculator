@@ -1,0 +1,208 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title></title>
+		<style></style>
+		<script>
+			function initialize()
+			{
+				compVar = document.getElementById("comps");
+				attsVar = document.getElementById("atts");
+				yardsVar = document.getElementById("yards");
+				tdsVar = document.getElementById("tds");
+				intsVar = document.getElementById("ints");
+				sacksVar = document.getElementById("sacks");
+				sYdsVar = document.getElementById("syds");
+				percVar = document.getElementById("comprate");
+				yPaVar = document.getElementById("yardsrate");
+				yPcVar = document.getElementById("ydspercomp");
+				tdPaVar = document.getElementById("tdsrate");
+				intPaVar = document.getElementById("intrate");
+				adjVar = document.getElementById("adjrate");
+				netVar = document.getElementById("netrate");
+				adjNetVar = document.getElementById("adjnetrate");
+				passVar = document.getElementById("nflrate");
+				ncaaVar = document.getElementById("ncaarate");
+				sackpVar = document.getElementById("sackpctg");
+				ptdsVar = document.getElementById("ptds");
+				rtdsVar = document.getElementById("rtds");
+				dtdsVar = document.getElementById("dtds");
+				sftyVar = document.getElementById("sfty");
+				mxpsVar = document.getElementById("mxps");
+				pointsVar = document.getElementById("points");
+				ppgVar = document.getElementById("ppg");
+				fgsVar = document.getElementById("fgs");
+				sxRank = document.getElementById("sxrk");
+				svRank = document.getElementById("svrk");
+				eiRank = document.getElementById("eirk");
+				sxDef = document.getElementById("sxdf");
+				svDef = document.getElementById("svdf");
+				eiDef = document.getElementById("eidf");
+				pointsTotal = 0;
+				resetBoxes();
+				resetArrays();
+			}
+			function resetArrays()
+			{
+			sixteenO = [540, 469, 441, 432, 421, 418, 416, 411, 410, 399, 399, 396, 389, 381, 369, 367, 363, 354, 354, 346, 343, 333, 327, 325, 
+			318, 310, 309, 279, 279, 275, 264, 224];
+			seventeenO = [478, 458, 457, 448, 417, 415, 410, 406, 395, 382, 366, 363, 355, 354, 353, 342, 338, 335, 334, 331, 330, 302, 301, 
+			298, 295, 290, 289, 281, 264, 263, 246, 234];
+			eighteenO = [565, 527, 504, 436, 433, 428, 428, 428, 421, 414, 402, 396, 389, 376, 376, 369, 368, 367, 360, 359, 342, 339, 333,
+			329, 324, 319, 310, 290, 281, 269, 245, 225];
+			sixteenD = [480, 454, 452, 423, 409, 406, 402, 400, 399, 394, 392, 388, 385, 383, 380, 378, 378, 369, 362, 358, 331, 328, 327, 331, 
+			315, 311, 307, 306, 297, 292, 284, 250];
+			seventeenD = [436, 410, 404, 393, 388, 388, 384, 383, 382, 382, 382, 376, 373, 361, 359, 356, 349, 339, 332, 332, 329, 327, 326, 320,
+			315, 308, 303, 296, 295, 272, 268, 252];
+			eighteenD = [467, 464, 455, 441, 435, 433, 425, 432, 421, 412, 400, 392, 384, 372, 374, 360, 360, 359, 353, 349, 348, 347, 344, 341, 
+			329, 325, 324, 316, 316, 303, 278, 373];
+			pointsTotal = 0;
+			}
+			function resetBoxes()
+			{
+				compVar.value = 0;
+				attsVar.value = 0;
+				yardsVar.value = 0;
+				tdsVar.value = 0;
+				intsVar.value = 0;
+				sacksVar.value = 0;
+				sYdsVar.value = 0;
+				ptdsVar.value = 0;
+				rtdsVar.value = 0;
+				dtdsVar.value = 0;
+				sftyVar.value = 0;
+				mxpsVar.value = 0;
+				fgsVar.value = 0;
+			}
+			function calcStats()
+			{
+				var completions = parseInt(compVar.value);
+				var attempts = parseInt(attsVar.value);
+				var yards = parseInt(yardsVar.value);
+				var touchdowns = parseInt(tdsVar.value);
+				var interceptions = parseInt(intsVar.value);
+				var sacks = parseInt(sacksVar.value);
+				var sackYards = parseInt(sYdsVar.value);
+				var adjustedYards = (yards + (20*touchdowns) - 45*interceptions);
+				var netYards = yards - sackYards;
+				var adjNetYards = adjustedYards - sackYards;
+				var totalAttempts = attempts + sacks;
+				var completionPercentage = 100*completions/attempts;
+				var yPa = yards / attempts;
+				var yPc = yards / completions;
+				var tdPerc = 100*touchdowns / attempts;
+				var intPerc = 100*interceptions / attempts;
+				var adjYdsPerAtt = adjustedYards / attempts;
+				var netYardsPerAtt = netYards / totalAttempts;
+				var adjNetYdsPerAtt = adjNetYards / totalAttempts;
+				var a = 0.05*completionPercentage - 1.5;
+				var b = 0.25*(yPa - 3);
+				var c = 0.2*tdPerc;
+				var d = 2.375 - 0.25*intPerc;
+				a = restrictVariable(a, 0, 2.375);
+				b = restrictVariable(b, 0, 2.375);
+				c = restrictVariable(c, 0, 2.375);
+				d = restrictVariable(d, 0, 2.375);
+				var rate = 100*((a + b + c + d)/6);
+				var colRate = (yards*8.4 + touchdowns*330 + completions*100 - interceptions*200)/attempts;
+				var e = yPa/8;
+				var sckPcg = 100*(sacks / (attempts + sacks));
+				percVar.innerHTML = completionPercentage;
+				yPaVar.innerHTML = yPa;
+				yPcVar.innerHTML = yPc;
+				tdPaVar.innerHTML = tdPerc;
+				intPaVar.innerHTML = intPerc;
+				adjVar.innerHTML = adjYdsPerAtt;
+				netVar.innerHTML = netYardsPerAtt;
+				adjNetVar.innerHTML = adjNetYdsPerAtt;
+				passVar.innerHTML = rate;
+				ncaaVar.innerHTML = colRate;
+				sackpVar.innerHTML = sckPcg;
+				var passTds = parseInt(ptdsVar.value);
+				var rushTds = parseInt(rtdsVar.value);
+				var stTds = parseInt(dtdsVar.value);
+				var fieldGoals = parseInt(fgsVar.value);
+				var safeties = parseInt(sftyVar.value);
+				var missedXPs = parseInt(mxpsVar.value);
+				var touchdownsTotal = passTds + rushTds + stTds;
+				pointsTotal = restrictVariable((7*touchdownsTotal + 3*fieldGoals + 2*safeties - missedXPs), 0, 999);
+				var pointsPG = pointsTotal/16;
+				pointsVar.innerHTML = pointsTotal;
+				ppgVar.innerHTML = pointsPG;
+				sixteenO[sixteenO.length] = pointsTotal;
+				seventeenO[seventeenO.length] = pointsTotal;
+				eighteenO[eighteenO.length] = pointsTotal;
+				sixteenD[sixteenD.length] = pointsTotal;
+				seventeenD[seventeenD.length] = pointsTotal;
+				eighteenD[eighteenD.length] = pointsTotal; 
+				sixteenO.sort();
+				seventeenO.sort();
+				eighteenO.sort();	
+				sixteenD.sort();
+				seventeenD.sort();
+				eighteenD.sort(); 
+				sxRank.innerHTML = restrictVariable((33 - sixteenO.findIndex(findOrder)), 1, 32);
+				svRank.innerHTML = restrictVariable((33 - seventeenO.findIndex(findOrder)), 1, 32);
+				eiRank.innerHTML = restrictVariable((33 - eighteenO.findIndex(findOrder)), 1, 32);
+				sxDef.innerHTML = restrictVariable(sixteenD.findIndex(findOrder), 1, 32);
+				svDef.innerHTML = restrictVariable(seventeenD.findIndex(findOrder), 1, 32);
+				eiDef.innerHTML = restrictVariable(eighteenD.findIndex(findOrder), 1, 32); 
+				resetArrays();
+			}
+			function findOrder(score)
+			{
+				return score >= pointsTotal;
+			}
+			function restrictVariable(variable, lower, upper)
+			{
+				if(variable < lower && lower != 74)
+				{
+					variable = lower;
+				}
+				if(variable > upper && upper != 74)
+				{
+					variable = upper;
+				}
+				return variable;
+			}
+		</script>
+	</head>
+	<body onload = "initialize();">
+		Attempts<input type = "text" id = "atts"></br>
+		Completions<input type = "text" id = "comps"></br>
+		Yards<input type = "text" id = "yards"></br>
+		Touchdowns<input type = "text" id = "tds"></br>
+		Interceptions<input type = "text" id = "ints"></br>
+		Sacks<input type = "text" id = "sacks"></br>
+		Sack Yards<input type = "text" id = "syds"></br>
+		<button onclick = "calcStats();">Calclate Stats</button>
+		<button onclick = "resetBoxes();">Clear Values</button></br>
+		Completion Percentage: <span id = "comprate"></span></br>
+		Yards per Attempt: <span id = "yardsrate"></span></br>
+		Yards per Completion: <span id = "ydspercomp"></span></br>
+		Touchdown %: <span id = "tdsrate"></span></br>
+		Interception %: <span id = "intrate"></span></br>
+		Adjusted Yards per Attempt: <span id = "adjrate"></span></br>
+		Net Yards per Attempt: <span id = "netrate"></span></br>
+		Adjusted Net Yards per Attempt: <span id = "adjnetrate"></span></br>
+		Passer Rating: <span id = "nflrate"></span></br>
+		NCAA Passer Rating: <span id = "ncaarate"></span></br>
+		Sack Percentage: <span id = "sackpctg"></span></br><hr>
+		Pass Touchdowns: <input type = "text" id = "ptds"></br>
+		Rush Touchdowns: <input type = "text" id = "rtds"></br>
+		Non-Offensive Touchdowns: <input type = "text" id = "dtds"></br>
+		Field Goals: <input type = "text" id = "fgs"></br>
+		Missed XPs: <input type = "text" id = "mxps"></br>
+		Safeties: <input type = "text" id = "sfty"></br>
+		Total Points: <span id = "points"></span></br>
+		Points Per Game: <span id = "ppg"></span></br>
+		2016 Rank: <span id = "sxrk"></span></br>
+		2017 Rank: <span id = "svrk"></span></br>
+		2018 Rank: <span id = "eirk"></span></br>
+		2016 Defensive Rank: <span id = "sxdf"></span></br>
+		2017 Defensive Rank: <span id = "svdf"></span></br>
+		2018 Defensive Rank: <span id = "eidf"></span></br>
+		
+		
+	</body>
+</html>
